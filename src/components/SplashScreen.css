@@ -1,0 +1,158 @@
+/* ─── Splash Overlay ─────────────────────────────────────── */
+.splash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0A0A0A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.splash-enter {
+  opacity: 0;
+  visibility: visible;
+}
+
+.splash-hold {
+  opacity: 1;
+  visibility: visible;
+}
+
+.splash-exit {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ─── Content wrapper ────────────────────────────────────── */
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: splashReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes splashReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Ornament ───────────────────────────────────────────── */
+.splash-ornament {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 180px;
+}
+
+.ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #C9A96E88, transparent);
+}
+
+.ornament-diamond {
+  width: 6px;
+  height: 6px;
+  background: #C9A96E;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ─── Logo area ──────────────────────────────────────────── */
+.splash-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.splash-gem {
+  width: 56px;
+  height: 48px;
+  animation: gemPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes gemPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
+.splash-name-ar {
+  font-family: "Cairo", "Tajawal", "Segoe UI", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #E8D5B0;
+  letter-spacing: 0.04em;
+  margin: 0;
+  direction: rtl;
+}
+
+.splash-name-en {
+  font-family: "Cinzel", "Cormorant Garamond", "Georgia", serif;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #C9A96E;
+  letter-spacing: 0.35em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ─── Tagline ────────────────────────────────────────────── */
+.splash-tagline {
+  font-family: "Cairo", "Tajawal", "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  color: #888;
+  letter-spacing: 0.1em;
+  margin: 0;
+  direction: rtl;
+}
+
+/* ─── Loading dots ───────────────────────────────────────── */
+.splash-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.splash-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C9A96E;
+  animation: dotBlink 1.4s ease-in-out infinite;
+}
+
+.splash-dots span:nth-child(1) { animation-delay: 0s; }
+.splash-dots span:nth-child(2) { animation-delay: 0.22s; }
+.splash-dots span:nth-child(3) { animation-delay: 0.44s; }
+
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.85); }
+  40%           { opacity: 1;   transform: scale(1.15); }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .splash-content,
+  .splash-gem,
+  .splash-dots span {
+    animation: none;
+  }
+  .splash-content { opacity: 1; transform: none; }
+}
+.splash-logo-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
