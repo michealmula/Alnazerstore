@@ -2,8 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SlidersHorizontal, X, ChevronDown, ArrowRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { ALL_PRODUCTS, CATALOG } from '../data/catalog';
-
+import { CATALOG } from '../data/catalog';
+import { useProducts } from '../data/useProducts';
 const PAGE_SIZE = 12;
 
 const SORT_OPTIONS = [
@@ -16,8 +16,9 @@ const SORT_OPTIONS = [
 
 export default function CategoryPage() {
   const { key } = useParams();
-  const cat       = CATALOG.find(c => c.key === key);
-  const products  = ALL_PRODUCTS[key] || [];
+const cat          = CATALOG.find(c => c.key === key);
+const allProducts  = useProducts();
+const products      = useMemo(() => allProducts.filter(p => p.category === key), [allProducts, key]);
 
   const [page,         setPage]         = useState(1);
   const [sort,         setSort]         = useState('default');

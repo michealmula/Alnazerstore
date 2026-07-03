@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { CATALOG, ALL_PRODUCTS, ALL_FLAT } from '../data/catalog';
+import { CATALOG } from '../data/catalog';
+import { useProducts } from '../data/useProducts';
 
 /* ── Hero Slides ── */
 const HERO_SLIDES = [
@@ -171,7 +172,7 @@ function CategoriesSection() {
           </Link>
         ))}
         {/* Men's Watches — external */}
-        <a href="https://michealmula.github.io/tq/" target="_blank" rel="noreferrer" className="category-card cat-external">
+        <a href="https://michealmula.github.io/tqstore/" target="_blank" rel="noreferrer" className="category-card cat-external">
           <div className="cat-icon">⌚</div>
           <h3 className="cat-name">ساعات رجالي</h3>
           <p className="cat-en">Men's Watches ↗</p>
@@ -185,9 +186,9 @@ function CategoriesSection() {
 /* ── Featured Tabs ── */
 function FeaturedSection() {
   const [tab, setTab] = useState('bestseller');
+  const allFlat = useProducts();
 
   const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-  const allFlat = ALL_FLAT;
 
   const pools = {
     bestseller: shuffle(allFlat.filter(p => p.isBestseller)).slice(0, 8),
@@ -222,6 +223,7 @@ function FeaturedSection() {
 
 /* ── Deals Banner ── */
 function DealsBanner() {
+  const allProducts = useProducts();
   return (
     <section className="deals-banner">
       <div className="deals-banner-inner">
@@ -238,7 +240,7 @@ function DealsBanner() {
           ].map(d => (
             <Link key={d.cat} to={`/category/${d.cat}`} className="deals-card"
               style={{ '--accent': d.color }}>
-              <img src={ALL_PRODUCTS[d.cat]?.[0]?.image} alt={d.label} />
+<img src={allProducts.find(p => p.category === d.cat)?.image} alt={d.label} />
               <div className="deals-card-overlay">
                 <span>{d.label}</span>
                 <span className="deals-off">خصم 30%</span>
@@ -285,10 +287,10 @@ function PromoBanner() {
 
 /* ── Main Home ── */
 export default function Home() {
-  const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+  const allProducts = useProducts();
 
-  const newArrivals = ALL_FLAT.filter(p => p.isNew).slice(0, 8);
-  const bestsellers = ALL_FLAT.filter(p => p.isBestseller).slice(0, 8);
+  const newArrivals = allProducts.filter(p => p.isNew).slice(0, 8);
+  const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
 
   return (
     <>

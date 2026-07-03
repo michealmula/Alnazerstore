@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { useStore } from '../context/StoreContext';
-import { ALL_FLAT } from '../data/catalog';
+import { useProducts } from '../data/useProducts';
 
 export default function Favorites() {
   const { favorites } = useStore();
-  const favProducts = ALL_FLAT.filter(p => favorites.includes(p.id));
+  const allProducts = useProducts();
+  const favProducts = allProducts.filter(p => favorites.includes(p.id));
+  
 
   return (
     <div className="page-wrapper">

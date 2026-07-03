@@ -51,7 +51,7 @@ export default function Footer() {
           {CATALOG.slice(7).map(cat => (
             <Link key={cat.key} to={`/category/${cat.key}`}>{cat.label}</Link>
           ))}
-          <a href="https://michealmula.github.io/tq/" target="_blank" rel="noreferrer">ساعات رجالي ↗</a>
+          <a href="https://michealmula.github.io/tqstore/" target="_blank" rel="noreferrer">ساعات رجالي ↗</a>
         </div>
 
         {/* Contact */}

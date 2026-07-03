@@ -13,6 +13,15 @@ import './index.css';
 import { useState, useCallback } from "react";
 import SplashScreen from "./components/SplashScreen";
 
+import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard'; // هنعملها بعدين
+
+function ProtectedAdminRoute({ children }) {
+  const { isAuthed } = useAdminAuth();
+  return isAuthed ? children : <AdminLogin />;
+}
+
 function AppShell() {
 
   const [splashDone, setSplashDone] = useState(false);
@@ -41,6 +50,12 @@ function AppShell() {
           <Route path="/category/:key"     element={<CategoryPage />} />
           <Route path="/favorites"         element={<Favorites />} />
           <Route path="*"                  element={<Home />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/*" element={
+            <ProtectedAdminRoute>
+              <AdminDashboard />
+            </ProtectedAdminRoute>
+          } />
         </Routes>
       </main>
       <Footer />
@@ -52,10 +67,12 @@ function AppShell() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/Alnazerstore">
       <StoreProvider>
         <ToastProvider>
-          <AppShell />
+          <AdminAuthProvider>
+            <AppShell />
+          </AdminAuthProvider>
         </ToastProvider>
       </StoreProvider>
     </BrowserRouter>

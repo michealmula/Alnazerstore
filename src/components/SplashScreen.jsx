@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./SplashScreen.css";
+import logo from "/logo.png";
 
 const SplashScreen = ({ onFinish }) => {
   const [phase, setPhase] = useState("enter"); // enter | hold | exit
@@ -29,7 +30,7 @@ const SplashScreen = ({ onFinish }) => {
         {/* Logo / Brand */}
         <div className="splash-logo">
 <img
-  src="/logo.png"
+src={logo}
   alt="Logo"
   className="splash-logo-img"
 />

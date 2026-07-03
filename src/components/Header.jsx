@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, X, Menu, ShoppingBag, Heart, ChevronDown, MessageCircle } from 'lucide-react';
-import { CATALOG, ALL_FLAT, WHATSAPP_NUMBER } from '../data/catalog';
+import { CATALOG, WHATSAPP_NUMBER } from '../data/catalog';
+import { useProducts } from '../data/useProducts';
 import { useStore } from '../context/StoreContext';
 import Logoimg from '../photos/logo.png'
 import { FaWhatsapp } from "react-icons/fa";
+
+import { addOrder } from '../data/store';
 
 
 export default function Header() {
@@ -50,8 +53,8 @@ useEffect(() => {
   }, []);
 
   /* ── search results ── */
-  const results = searchQ.trim().length > 0
-    ? ALL_FLAT.filter(p =>
+const results = searchQ.trim().length > 0
+    ? allProducts.filter(p =>
         p.name.toLowerCase().includes(searchQ.toLowerCase()) ||
         p.code.toLowerCase().includes(searchQ.toLowerCase()) ||
         p.categoryLabel.includes(searchQ)
@@ -113,7 +116,7 @@ useEffect(() => {
               </div>
             </Link>
           ))}
-          <a href="https://michealmula.github.io/tq/" className="cat-drop-item cat-drop-ext"
+          <a href="https://michealmula.github.io/tqstore/" className="cat-drop-item cat-drop-ext"
             target="_blank" rel="noreferrer" onClick={() => setCatOpen(false)}>
             <span className="cat-drop-icon">⌚</span>
             <div>
@@ -218,15 +221,21 @@ useEffect(() => {
                         </div>
                         <a
                           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                            'مرحباً! أود طلب:\n\n' +
-                            cart.map(i => `• ${i.name} (${i.code}) x${i.qty} — ${i.price * i.qty} EGP`).join('\n') +
-                            `\n\nالإجمالي: ${cartTotal} EGP`
-                          )}`}
-                          target="_blank" rel="noreferrer"
-                          className="btn-primary cart-wa-btn"
-                        >
-                          اطلب عبر واتساب
-                        </a>
+                              'مرحباً! أود طلب:\n\n' +
+                              cart.map(i => `• ${i.name} (${i.code}) x${i.qty} — ${i.price * i.qty} EGP`).join('\n') +
+                              `\n\nالإجمالي: ${cartTotal} EGP`
+                            )}`}
+                            target="_blank" rel="noreferrer"
+                            className="btn-primary cart-wa-btn"
+                            onClick={() => {
+                              addOrder({
+                                items: cart.map(i => ({ id: i.id, name: i.name, code: i.code, price: i.price, qty: i.qty })),
+                                total: cartTotal,
+                              });
+                            }}
+                          >
+                            اطلب عبر واتساب
+                          </a>
                       </>
                   }
                 </div>
@@ -289,7 +298,7 @@ useEffect(() => {
                 {cat.icon} {cat.label} — {cat.labelEn}
               </Link>
             ))}
-            <a href="https://michealmula.github.io/tq/" className="mobile-nav-link" target="_blank" rel="noreferrer">
+            <a href="https://michealmula.github.io/tqstore/" className="mobile-nav-link" target="_blank" rel="noreferrer">
               ⌚ ساعات رجالي — Men's Watches ↗
             </a>
             <Link to="/favorites" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
