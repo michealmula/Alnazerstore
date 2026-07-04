@@ -109,3 +109,23 @@ export async function migrateInitialProducts(allFlatProducts) {
   }
   return { skipped: false, message: `تم نقل ${allFlatProducts.length} منتج بنجاح` };
 }
+export async function repairProductImages(allFlatProducts) {
+  let fixed = 0;
+  for (const product of allFlatProducts) {
+    try {
+      const response = await fetch(product.image);
+      const blob = await response.blob();
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      await updateDoc(doc(db, 'products', product.id), { image: base64 });
+      fixed++;
+    } catch (err) {
+      console.error(`فشل تحديث صورة ${product.id}:`, err);
+    }
+  }
+  return fixed;
+}
