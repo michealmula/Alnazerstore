@@ -227,12 +227,12 @@ const results = searchQ.trim().length > 0
                             )}`}
                             target="_blank" rel="noreferrer"
                             className="btn-primary cart-wa-btn"
-                            onClick={() => {
-                              addOrder({
-                                items: cart.map(i => ({ id: i.id, name: i.name, code: i.code, price: i.price, qty: i.qty })),
-                                total: cartTotal,
-                              });
-                            }}
+                            onClick={async () => {
+  await addOrder({
+    items: cart.map(i => ({ id: i.id, name: i.name, code: i.code, price: i.price, qty: i.qty })),
+    total: cartTotal,
+  });
+}}
                           >
                             اطلب عبر واتساب
                           </a>

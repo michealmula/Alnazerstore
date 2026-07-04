@@ -1,97 +1,67 @@
-import { ALL_PRODUCTS } from './catalog';
+import { db } from '../firebase';
+import {
+  collection, doc, getDocs, addDoc, updateDoc, deleteDoc,
+  setDoc, query, orderBy, onSnapshot, serverTimestamp,
+} from 'firebase/firestore';
 
-const PRODUCTS_KEY = 'alnazer_admin_products';
-const ORDERS_KEY    = 'alnazer_admin_orders';
-const SEEDED_KEY     = 'alnazer_admin_seeded';
-
-/* ── تحويل ALL_PRODUCTS (منتجات ثابتة) لمصفوفة واحدة أول مرة بس ── */
-function seedIfNeeded() {
-  if (localStorage.getItem(SEEDED_KEY)) return;
-  const flat = Object.values(ALL_PRODUCTS).flat().map(p => ({
-    ...p,
-    // بما إن الصور imports ثابتة، هنحتفظ بالـ image زي ما هي (URL/blob من Vite)
-    createdAt: new Date().toISOString(),
-  }));
-  localStorage.setItem(PRODUCTS_KEY, JSON.stringify(flat));
-  localStorage.setItem(SEEDED_KEY, '1');
-}
-
-function read(key, fallback) {
-  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
-  catch { return fallback; }
-}
-function write(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+const productsCol = collection(db, 'products');
+const ordersCol   = collection(db, 'orders');
 
 /* ============================================================
    PRODUCTS
    ============================================================ */
-export function getProducts() {
-  seedIfNeeded();
-  return read(PRODUCTS_KEY, []);
+
+// اشتراك لحظي — أي تغيير في Firestore هيوصل لكل الأجهزة فوراً
+export function subscribeProducts(callback) {
+  return onSnapshot(productsCol, (snapshot) => {
+    const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    callback(list);
+  });
 }
 
-export function saveProduct(product) {
-  const list = getProducts();
-  const idx = list.findIndex(p => p.id === product.id);
-  if (idx >= 0) {
-    list[idx] = { ...list[idx], ...product, updatedAt: new Date().toISOString() };
+export async function saveProduct(product) {
+  if (product.id) {
+    const ref = doc(db, 'products', product.id);
+    const { id, ...data } = product;
+    await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
   } else {
-    const newProduct = {
-      ...product,
-      id: product.id || `custom-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    list.push(newProduct);
+    await addDoc(productsCol, { ...product, createdAt: serverTimestamp() });
   }
-  write(PRODUCTS_KEY, list);
-  window.dispatchEvent(new Event('alnazer-products-updated')); // ← جديد
-  return list;
 }
 
-
-
-export function deleteProduct(id) {
-  const list = getProducts().filter(p => p.id !== id);
-  write(PRODUCTS_KEY, list);
-  return list;
+export async function deleteProduct(id) {
+  await deleteDoc(doc(db, 'products', id));
 }
 
 /* ============================================================
-   ORDERS — هنسجل الطلب لما حد يدوس "اطلب واتساب"
+   ORDERS
    ============================================================ */
-export function getOrders() {
-  return read(ORDERS_KEY, []);
+
+export function subscribeOrders(callback) {
+  const q = query(ordersCol, orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    callback(list);
+  });
 }
 
-export function addOrder(order) {
-  const list = getOrders();
-  const newOrder = {
-    id: `order-${Date.now()}`,
-    items: order.items,           // [{id,name,code,price,qty}]
+export async function addOrder(order) {
+  await addDoc(ordersCol, {
+    items: order.items,
     total: order.total,
-    createdAt: new Date().toISOString(),
-    status: 'pending',            // pending | confirmed | cancelled
-  };
-  list.unshift(newOrder);
-  write(ORDERS_KEY, list);
-  return list;
+    status: 'pending',
+    createdAt: serverTimestamp(),
+  });
 }
 
-export function updateOrderStatus(orderId, status) {
-  const list = getOrders().map(o => o.id === orderId ? { ...o, status } : o);
-  write(ORDERS_KEY, list);
-  return list;
+export async function updateOrderStatus(orderId, status) {
+  await updateDoc(doc(db, 'orders', orderId), { status });
 }
 
 /* ============================================================
-   ANALYTICS — محسوبة من نفس الداتا
+   ANALYTICS — بتاخد الداتا الحالية وتحسب منها
    ============================================================ */
-export function getAnalytics() {
-  const products = getProducts();
-  const orders   = getOrders();
-
+export function computeAnalytics(products, orders) {
   const totalRevenue = orders
     .filter(o => o.status !== 'cancelled')
     .reduce((s, o) => s + o.total, 0);
@@ -123,4 +93,19 @@ export function getAnalytics() {
     topProducts,
     categoryCount,
   };
+}
+
+/* ============================================================
+   MIGRATION — نستخدمها مرة واحدة بس عشان ننقل منتجاتك القديمة
+   ============================================================ */
+export async function migrateInitialProducts(allFlatProducts) {
+  const existing = await getDocs(productsCol);
+  if (!existing.empty) {
+    return { skipped: true, message: 'فيه منتجات موجودة بالفعل في Firestore، مش هنكرر النقل' };
+  }
+  for (const product of allFlatProducts) {
+    const { id, ...data } = product;
+    await setDoc(doc(db, 'products', id), { ...data, createdAt: serverTimestamp() });
+  }
+  return { skipped: false, message: `تم نقل ${allFlatProducts.length} منتج بنجاح` };
 }

@@ -4,17 +4,23 @@ import { Lock } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 
 export default function AdminLogin() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAdminAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (login(password)) {
+    setError('');
+    setSubmitting(true);
+    const result = await login(email, password);
+    setSubmitting(false);
+    if (result.success) {
       navigate('/admin');
     } else {
-      setError('الباسورد غلط، حاول تاني');
+      setError(result.message);
     }
   };
 
@@ -33,19 +39,29 @@ export default function AdminLogin() {
           <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)' }}>لوحة تحكم Alnazer</h2>
         </div>
         <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="كلمة المرور"
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="الإيميل"
           autoFocus
           style={{
             padding: '12px 16px', background: 'var(--dark)', border: '1px solid var(--dark-border)',
             borderRadius: 'var(--radius-sm)', color: 'var(--white)', fontSize: '.9rem',
           }}
         />
+        <input
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="كلمة المرور"
+          style={{
+            padding: '12px 16px', background: 'var(--dark)', border: '1px solid var(--dark-border)',
+            borderRadius: 'var(--radius-sm)', color: 'var(--white)', fontSize: '.9rem',
+          }}
+        />
         {error && <p style={{ color: '#e94848', fontSize: '.82rem', fontFamily: 'var(--font-arabic)' }}>{error}</p>}
-        <button type="submit" className="btn-primary" style={{ justifyContent: 'center' }}>
-          دخول
+        <button type="submit" className="btn-primary" style={{ justifyContent: 'center' }} disabled={submitting}>
+          {submitting ? 'جاري الدخول...' : 'دخول'}
         </button>
       </form>
     </div>

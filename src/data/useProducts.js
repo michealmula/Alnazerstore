@@ -1,15 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { getProducts } from './store';
+import { useState, useEffect } from 'react';
+import { subscribeProducts } from './store';
 
 export function useProducts() {
-  const [products, setProducts] = useState(() => getProducts());
-
-  const refresh = useCallback(() => setProducts(getProducts()), []);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    window.addEventListener('alnazer-products-updated', refresh);
-    return () => window.removeEventListener('alnazer-products-updated', refresh);
-  }, [refresh]);
+    const unsubscribe = subscribeProducts(setProducts);
+    return unsubscribe;
+  }, []);
 
   return products;
 }

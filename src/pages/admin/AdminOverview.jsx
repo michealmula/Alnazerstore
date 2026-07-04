@@ -1,23 +1,60 @@
 import { useEffect, useState } from 'react';
-import { getAnalytics } from '../../data/store';
-
-const cardStyle = {
-  background: 'var(--dark-card)', border: '1px solid var(--dark-border)',
-  borderRadius: 'var(--radius-lg)', padding: 22, flex: 1, minWidth: 180,
-};
+import { useProducts } from '../../data/useProducts';
+import { subscribeOrders, computeAnalytics, migrateInitialProducts } from '../../data/store';
+import { ALL_FLAT } from '../../data/catalog';
 
 export default function AdminOverview() {
-  const [stats, setStats] = useState(null);
+  const products = useProducts();
+  const [orders, setOrders] = useState([]);
+  const [migrating, setMigrating] = useState(false);
+  const [migrateMsg, setMigrateMsg] = useState('');
 
-  useEffect(() => { setStats(getAnalytics()); }, []);
+  useEffect(() => {
+    const unsubscribe = subscribeOrders(setOrders);
+    return unsubscribe;
+  }, []);
 
-  if (!stats) return null;
+  const stats = computeAnalytics(products, orders);
+
+  const handleMigrate = async () => {
+    setMigrating(true);
+    setMigrateMsg('');
+    try {
+      const result = await migrateInitialProducts(ALL_FLAT);
+      setMigrateMsg(result.message);
+    } catch (err) {
+      setMigrateMsg('حصل خطأ: ' + err.message);
+    }
+    setMigrating(false);
+  };
+
+  const cardStyle = {
+    background: 'var(--dark-card)', border: '1px solid var(--dark-border)',
+    borderRadius: 'var(--radius-lg)', padding: 22, flex: 1, minWidth: 180,
+  };
 
   return (
     <div>
       <h1 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)', marginBottom: 24 }}>
         نظرة عامة
       </h1>
+
+      {/* زرار الـ Migration — مؤقت، هنمسحه بعد الاستخدام */}
+      {products.length === 0 && (
+        <div style={{
+          background: 'rgba(233,165,72,.08)', border: '1px solid rgba(233,165,72,.3)',
+          borderRadius: 'var(--radius-lg)', padding: 20, marginBottom: 24,
+        }}>
+          <p style={{ color: 'var(--white)', fontFamily: 'var(--font-arabic)', marginBottom: 12 }}>
+            مفيش منتجات في قاعدة البيانات لسه. دوس الزرار ده مرة واحدة بس عشان تنقل كل منتجاتك القديمة.
+          </p>
+          <button className="btn-primary" onClick={handleMigrate} disabled={migrating}>
+            {migrating ? 'جاري النقل...' : 'نقل المنتجات القديمة'}
+          </button>
+          {migrateMsg && <p style={{ color: 'var(--gold)', marginTop: 10, fontSize: '.85rem' }}>{migrateMsg}</p>}
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 32 }}>
         <div style={cardStyle}>
           <p style={{ color: 'var(--white-muted)', fontSize: '.8rem', marginBottom: 6 }}>عدد المنتجات</p>

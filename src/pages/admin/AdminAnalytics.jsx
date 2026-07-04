@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getAnalytics } from '../../data/store';
+import { useProducts } from '../../data/useProducts';
+import { subscribeOrders, computeAnalytics } from '../../data/store';
 
 export default function AdminAnalytics() {
-  const [stats, setStats] = useState(null);
-  useEffect(() => { setStats(getAnalytics()); }, []);
-  if (!stats) return null;
+  const products = useProducts();
+  const [orders, setOrders] = useState([]);
 
+  useEffect(() => {
+    const unsubscribe = subscribeOrders(setOrders);
+    return unsubscribe;
+  }, []);
+
+  const stats = computeAnalytics(products, orders);
   const categories = Object.entries(stats.categoryCount).sort((a, b) => b[1] - a[1]);
   const maxCount = Math.max(...categories.map(c => c[1]), 1);
 

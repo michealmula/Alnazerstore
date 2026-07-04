@@ -18,7 +18,8 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard'; // هنعملها بعدين
 
 function ProtectedAdminRoute({ children }) {
-  const { isAuthed } = useAdminAuth();
+  const { isAuthed, loading } = useAdminAuth();
+  if (loading) return <div style={{ minHeight: '100vh', background: 'var(--black)' }} />;
   return isAuthed ? children : <AdminLogin />;
 }
 

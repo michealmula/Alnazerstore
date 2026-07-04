@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
 import { CATALOG } from '../../data/catalog';
-import { getProducts, saveProduct, deleteProduct } from '../../data/store';
+import { saveProduct, deleteProduct } from '../../data/store';
+import { useProducts } from '../../data/useProducts';
 
 const inputStyle = {
   padding: '10px 14px', background: 'var(--dark)', border: '1px solid var(--dark-border)',
@@ -9,28 +10,23 @@ const inputStyle = {
 };
 
 export default function ProductsAdmin() {
-  const [products, setProducts] = useState([]);
+  const products = useProducts();
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState(null); // null | {} (new) | product object
-
-  const refresh = () => setProducts(getProducts());
-  useEffect(refresh, []);
 
   const filtered = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.code.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = (id) => {
+const handleDelete = async (id) => {
     if (!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
-    deleteProduct(id);
-    refresh();
+    await deleteProduct(id);
   };
 
-  const handleSave = (product) => {
-    saveProduct(product);
+  const handleSave = async (product) => {
+    await saveProduct(product);
     setEditing(null);
-    refresh();
   };
 
   return (

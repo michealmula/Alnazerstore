@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getOrders, updateOrderStatus } from '../../data/store';
+import { subscribeOrders, updateOrderStatus } from '../../data/store';
 
 const statusColors = {
   pending:   { bg: 'rgba(233,165,72,.12)', color: 'var(--gold)' },
@@ -8,19 +8,19 @@ const statusColors = {
 };
 const statusLabels = { pending: 'معلق', confirmed: 'مؤكد', cancelled: 'ملغي' };
 
-export default function AdminOrders() {
-  const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('all');
+const [orders, setOrders] = useState([]);
+const [filter, setFilter] = useState('all');
 
-  const refresh = () => setOrders(getOrders());
-  useEffect(refresh, []);
+useEffect(() => {
+  const unsubscribe = subscribeOrders(setOrders);
+  return unsubscribe;
+}, []);
 
   const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
-  const handleStatus = (id, status) => {
-    updateOrderStatus(id, status);
-    refresh();
-  };
+const handleStatus = async (id, status) => {
+  await updateOrderStatus(id, status);
+};
 
   return (
     <div>
@@ -101,4 +101,3 @@ export default function AdminOrders() {
       )}
     </div>
   );
-}
