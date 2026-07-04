@@ -8,19 +8,20 @@ const statusColors = {
 };
 const statusLabels = { pending: 'معلق', confirmed: 'مؤكد', cancelled: 'ملغي' };
 
-const [orders, setOrders] = useState([]);
-const [filter, setFilter] = useState('all');
+export default function AdminOrders() {
+  const [orders, setOrders] = useState([]);
+  const [filter, setFilter] = useState('all');
 
-useEffect(() => {
-  const unsubscribe = subscribeOrders(setOrders);
-  return unsubscribe;
-}, []);
+  useEffect(() => {
+    const unsubscribe = subscribeOrders(setOrders);
+    return unsubscribe;
+  }, []);
 
   const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
-const handleStatus = async (id, status) => {
-  await updateOrderStatus(id, status);
-};
+  const handleStatus = async (id, status) => {
+    await updateOrderStatus(id, status);
+  };
 
   return (
     <div>
@@ -60,7 +61,9 @@ const handleStatus = async (id, status) => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                 <div>
                   <span style={{ color: 'var(--white)', fontSize: '.84rem' }}>
-                    {new Date(order.createdAt).toLocaleString('ar-EG')}
+                    {order.createdAt?.toDate
+                      ? order.createdAt.toDate().toLocaleString('ar-EG')
+                      : 'جاري التحميل...'}
                   </span>
                 </div>
                 <span style={{
@@ -101,3 +104,4 @@ const handleStatus = async (id, status) => {
       )}
     </div>
   );
+}
