@@ -1,24 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useProducts } from '../../data/useProducts';
-import { subscribeOrders, computeAnalytics, repairProductImages } from '../../data/store';
-import { ALL_FLAT } from '../../data/catalog';
+import { subscribeOrders, computeAnalytics } from '../../data/store';
 
 export default function AdminOverview() {
   const products = useProducts();
   const [orders, setOrders] = useState([]);
-  const [repairing, setRepairing] = useState(false);
-  const [repairMsg, setRepairMsg] = useState('');
-
-  useEffect(() => {
-    const unsubscribe = subscribeOrders(setOrders);
-    return unsubscribe;
-  }, []);
-
-  const stats = computeAnalytics(products, orders);
-
-  const handleRepair = async () => {
-    setRepairing(true);
-    setRepairMsg('');
     const fixed = await repairProductImages(ALL_FLAT);
     setRepairMsg(`تم إصلاح ${fixed} صورة من ${ALL_FLAT.length}`);
     setRepairing(false);
@@ -35,19 +21,7 @@ export default function AdminOverview() {
         نظرة عامة
       </h1>
 
-      {/* زرار إصلاح الصور — مؤقت، هنمسحه بعد الاستخدام */}
-      <div style={{
-        background: 'rgba(233,72,72,.08)', border: '1px solid rgba(233,72,72,.3)',
-        borderRadius: 'var(--radius-lg)', padding: 20, marginBottom: 24,
-      }}>
-        <p style={{ color: 'var(--white)', fontFamily: 'var(--font-arabic)', marginBottom: 12 }}>
-          إصلاح الصور القديمة اللي مش ظاهرة (دوسه مرة واحدة بس)
-        </p>
-        <button className="btn-primary" onClick={handleRepair} disabled={repairing}>
-          {repairing ? 'جاري الإصلاح...' : 'إصلاح الصور'}
-        </button>
-        {repairMsg && <p style={{ color: 'var(--gold)', marginTop: 10, fontSize: '.85rem' }}>{repairMsg}</p>}
-      </div>
+
 
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 32 }}>
         <div style={cardStyle}>
