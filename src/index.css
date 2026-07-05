@@ -1014,3 +1014,113 @@ input { font-family: inherit; outline: none; border: none; }
   .products-grid { grid-template-columns: repeat(5, 1fr); }
   .categories-grid { grid-template-columns: repeat(6, 1fr); }
 }
+
+
+/* ─────────────────────────────────────────────
+   ADMIN DASHBOARD — Responsive
+───────────────────────────────────────────── */
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--black);
+}
+
+.admin-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--dark-card);
+  border-right: 1px solid var(--dark-border);
+  padding: 24px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.3s ease;
+}
+
+.admin-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(8,8,8,.97);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--dark-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-topbar-logo {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--gold);
+}
+
+.admin-menu-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(233,165,72,.08);
+  border: 1px solid rgba(233,165,72,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.admin-sidebar-close {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  align-items: center;
+  justify-content: center;
+  color: var(--white-muted);
+}
+
+.admin-main {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  z-index: 150;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-table-wrap table {
+  min-width: 640px;
+}
+
+@media (max-width: 900px) {
+  .admin-shell { flex-direction: column; }
+  .admin-topbar { display: flex; }
+
+.admin-sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    z-index: 200;
+    transform: translateX(-100%);
+    box-shadow: 8px 0 30px rgba(0,0,0,.5);
+    border-right: 1px solid var(--dark-border);
+    padding-top: 50px; /* ← ده اللي بينزل "Alnazer Admin" و الـ X شوية لتحت */
+  }
+  .admin-sidebar.open { transform: translateX(0); }
+  .admin-sidebar-close { display: flex; }
+
+  .admin-overlay.open { display: block; }
+
+  .admin-main { padding: 18px; }
+}

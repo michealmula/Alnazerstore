@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, BarChart3, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, BarChart3, LogOut, Menu, X } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 
 const links = [
@@ -12,28 +13,49 @@ const links = [
 export default function AdminLayout({ children }) {
   const { logout } = useAdminAuth();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/admin/login');
   };
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--black)' }}>
+    <div className="admin-shell">
+      {/* Top bar — تظهر بس في الموبايل */}
+      <div className="admin-topbar">
+        <button className="admin-menu-btn" onClick={() => setSidebarOpen(true)} aria-label="فتح القائمة">
+          <Menu size={19} />
+        </button>
+        <span className="admin-topbar-logo">Alnazer Admin</span>
+        <div style={{ width: 40 }} /> {/* عشان اللوجو يفضل في النص */}
+      </div>
+
+      {/* Overlay خلفية سودا لما السايدبار مفتوح في الموبايل */}
+      <div className={`admin-overlay${sidebarOpen ? ' open' : ''}`} onClick={closeSidebar} />
+
       {/* Sidebar */}
-      <aside style={{
-        width: 230, flexShrink: 0, background: 'var(--dark-card)',
-        borderRight: '1px solid var(--dark-border)', padding: '24px 14px',
-        display: 'flex', flexDirection: 'column', gap: 6,
-      }}>
-        <div style={{ padding: '0 10px 24px', fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: 'var(--gold)' }}>
-          Alnazer Admin
+      <aside className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '0 10px 24px',
+        }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: 'var(--gold)' }}>
+            Alnazer Admin
+          </span>
+          <button onClick={closeSidebar} className="admin-sidebar-close" aria-label="قفل القائمة">
+            <X size={17} />
+          </button>
         </div>
+
         {links.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
+            onClick={closeSidebar}
             style={({ isActive }) => ({
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '11px 12px', borderRadius: 'var(--radius-sm)',
@@ -60,7 +82,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Content */}
-      <main style={{ flex: 1, padding: 32, overflowY: 'auto' }}>
+      <main className="admin-main">
         {children}
       </main>
     </div>
