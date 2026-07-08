@@ -24,15 +24,8 @@ function ProtectedAdminRoute({ children }) {
 }
 
 function AppShell() {
-
   const [splashDone, setSplashDone] = useState(false);
-
-  const handleSplashFinish = useCallback(() => {
-    setSplashDone(true);
-  }, []);
-
-
-
+  const handleSplashFinish = useCallback(() => setSplashDone(true), []);
   const location = useLocation();
 
   // scroll to top on route change
@@ -40,23 +33,32 @@ function AppShell() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 
+  // ── Admin pages — بدون Header/Footer/Splash
+  const isAdmin = location.pathname.startsWith('/admin');
+  if (isAdmin) {
+    return (
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/*" element={
+          <ProtectedAdminRoute>
+            <AdminDashboard />
+          </ProtectedAdminRoute>
+        } />
+      </Routes>
+    );
+  }
+
+  // ── Store pages — مع Header/Footer/Splash
   return (
     <>
-          {!splashDone && <SplashScreen onFinish={handleSplashFinish} />}
-
+      {!splashDone && <SplashScreen onFinish={handleSplashFinish} />}
       <Header />
       <main className="main-content">
         <Routes>
-          <Route path="/"                  element={<Home />} />
-          <Route path="/category/:key"     element={<CategoryPage />} />
-          <Route path="/favorites"         element={<Favorites />} />
-          <Route path="*"                  element={<Home />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/*" element={
-            <ProtectedAdminRoute>
-              <AdminDashboard />
-            </ProtectedAdminRoute>
-          } />
+          <Route path="/"              element={<Home />} />
+          <Route path="/category/:key" element={<CategoryPage />} />
+          <Route path="/favorites"     element={<Favorites />} />
+          <Route path="*"              element={<Home />} />
         </Routes>
       </main>
       <Footer />

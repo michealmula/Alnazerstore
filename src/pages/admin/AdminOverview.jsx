@@ -3,7 +3,7 @@ import { useProducts } from '../../data/useProducts';
 import { subscribeOrders, computeAnalytics } from '../../data/store';
 
 export default function AdminOverview() {
-  const products = useProducts();
+  const {products} = useProducts();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -14,8 +14,7 @@ export default function AdminOverview() {
     return () => unsub && unsub();
   }, []);
 
-  const stats = computeAnalytics(products, orders);
-
+const stats = computeAnalytics(products || [], orders);
   const cardStyle = {
     background: 'var(--dark-card)',
     border: '1px solid var(--dark-border)',

@@ -10,7 +10,7 @@ const inputStyle = {
 };
 
 export default function ProductsAdmin() {
-  const products = useProducts();
+  const {products  } = useProducts();
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState(null); // null | {} (new) | product object
 
@@ -93,7 +93,7 @@ const handleDelete = async (id) => {
 
 function ProductFormModal({ product, onClose, onSave }) {
   const isNew = !product.id;
-  const [form, setForm] = useState({
+const [form, setForm] = useState({
     id: product.id || '',
     name: product.name || '',
     code: product.code || '',
@@ -103,6 +103,8 @@ function ProductFormModal({ product, onClose, onSave }) {
     image: product.image || '',
     badge: product.badge || '',
     rating: product.rating || 4.5,
+    isNew: product.isNew || false,
+    isBestseller: product.isBestseller || false,
   });
 
   const handleImageUpload = (e) => {
@@ -123,8 +125,8 @@ function ProductFormModal({ product, onClose, onSave }) {
       categoryLabel: cat.label,
       group: cat.group,
       gender: cat.gender,
-      isNew: form.badge === 'new',
-      isBestseller: form.badge === 'hot',
+isNew: form.isNew,
+isBestseller: form.isBestseller,
     });
   };
 
@@ -167,11 +169,36 @@ function ProductFormModal({ product, onClose, onSave }) {
           {CATALOG.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
         </select>
 
-        <select style={inputStyle} value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}>
-          <option value="">بدون شارة</option>
-          <option value="new">جديد</option>
-          <option value="hot">الأكثر مبيعاً</option>
-        </select>
+<select style={inputStyle} value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}>
+  <option value="">بدون شارة</option>
+  <option value="new">جديد</option>
+  <option value="hot">الأكثر مبيعاً</option>
+</select>
+
+{/* ← ضيف الجزء ده بعده مباشرة */}
+<div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '10px 0', borderTop: '1px solid var(--dark-border)' }}>
+  <p style={{ color: 'var(--white-muted)', fontSize: '.8rem', fontFamily: 'var(--font-arabic)' }}>
+    ظهور في الصفحة الرئيسية
+  </p>
+  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontFamily: 'var(--font-arabic)', color: 'var(--white-muted)', fontSize: '.84rem' }}>
+    <input
+      type="checkbox"
+      checked={form.isBestseller}
+      onChange={e => setForm({ ...form, isBestseller: e.target.checked })}
+      style={{ accentColor: 'var(--gold)', width: 16, height: 16 }}
+    />
+    يظهر في Best Sellers
+  </label>
+  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontFamily: 'var(--font-arabic)', color: 'var(--white-muted)', fontSize: '.84rem' }}>
+    <input
+      type="checkbox"
+      checked={form.isNew}
+      onChange={e => setForm({ ...form, isNew: e.target.checked })}
+      style={{ accentColor: 'var(--gold)', width: 16, height: 16 }}
+    />
+    يظهر في New Arrivals
+  </label>
+</div>
 
         <textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} placeholder="الوصف"
           value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
