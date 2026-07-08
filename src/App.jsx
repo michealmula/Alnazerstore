@@ -17,6 +17,8 @@ import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard'; // هنعملها بعدين
 
+import CollectionPage from './pages/CollectionPage';
+
 function ProtectedAdminRoute({ children }) {
   const { isAuthed, loading } = useAdminAuth();
   if (loading) return <div style={{ minHeight: '100vh', background: 'var(--black)' }} />;
@@ -55,10 +57,12 @@ function AppShell() {
       <Header />
       <main className="main-content">
         <Routes>
-          <Route path="/"              element={<Home />} />
-          <Route path="/category/:key" element={<CategoryPage />} />
-          <Route path="/favorites"     element={<Favorites />} />
-          <Route path="*"              element={<Home />} />
+<Route path="/"              element={<Home />} />
+<Route path="/category/:key" element={<CategoryPage />} />
+<Route path="/favorites"     element={<Favorites />} />
+<Route path="/best-sellers"  element={<CollectionPage type="bestsellers" />} />
+<Route path="/new-arrivals"  element={<CollectionPage type="new-arrivals" />} />
+<Route path="*"              element={<Home />} />
         </Routes>
       </main>
       <Footer />

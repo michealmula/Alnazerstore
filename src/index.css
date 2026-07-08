@@ -1180,3 +1180,94 @@ input { font-family: inherit; outline: none; border: none; }
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ─────────────────────────────────────────────
+   COLLECTION PAGE (Best Sellers / New Arrivals)
+───────────────────────────────────────────── */
+.collection-page { min-height: 100vh; }
+
+/* Hero */
+.col-hero {
+  position: relative;
+  height: 52vh; min-height: 380px;
+  background-image: var(--col-bg);
+  background-size: cover; background-position: center;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+.col-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.55) 50%,
+    rgba(0,0,0,.2)  100%
+  );
+}
+.col-hero-content {
+  position: relative; z-index: 1;
+  padding: 0 48px 48px;
+  max-width: 1440px; width: 100%; margin: 0 auto;
+}
+.col-hero-eyebrow {
+  font-size: .76rem; letter-spacing: 4px; color: var(--gold);
+  text-transform: uppercase; font-weight: 500;
+  display: block; margin-bottom: 12px;
+}
+.col-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 600; color: var(--white);
+  line-height: 1.05; margin-bottom: 12px;
+}
+.col-hero-desc {
+  font-family: var(--font-arabic);
+  color: rgba(255,255,255,.72);
+  font-size: .96rem; margin-bottom: 28px;
+  direction: rtl; max-width: 500px;
+}
+
+/* Stats */
+.col-stats {
+  display: flex; align-items: center; gap: 0;
+}
+.col-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 0 24px 0 0;
+}
+.col-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.8rem; font-weight: 600; color: var(--gold); line-height: 1;
+}
+.col-stat-label {
+  font-size: .7rem; color: var(--white-muted);
+  letter-spacing: 1px; font-family: var(--font-arabic);
+}
+.col-stat-divider {
+  width: 1px; height: 36px;
+  background: rgba(255,255,255,.15);
+  margin: 0 24px 0 0;
+}
+
+/* Body */
+.col-body {
+  max-width: 1440px; margin: 0 auto;
+  padding: 40px 28px 72px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .col-hero { height: 44vh; min-height: 300px; }
+  .col-hero-content { padding: 0 20px 36px; }
+  .col-hero-title { font-size: 2.2rem; }
+  .col-stat-num { font-size: 1.4rem; }
+  .col-stat { padding: 0 16px 0 0; }
+  .col-stat-divider { margin: 0 16px 0 0; }
+  .col-body { padding: 28px 16px 60px; }
+}
+
+@media (max-width: 480px) {
+  .col-hero-desc { display: none; }
+  .col-stats { flex-wrap: wrap; gap: 12px; }
+  .col-stat-divider { display: none; }
+}

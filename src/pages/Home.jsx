@@ -322,7 +322,7 @@ export default function Home() {
           title="Best"
           titleGold="Sellers"
           products={bestsellers}
-          link="/category/salasil"
+          link="/best-sellers"
           linkLabel="عرض الكل"
         />
       </section>
@@ -334,7 +334,7 @@ export default function Home() {
           title="New"
           titleGold="Arrivals"
           products={newArrivals}
-          link="/category/halaqan"
+          link="/new-arrivals"
           linkLabel="عرض الكل"
         />
       </section>
