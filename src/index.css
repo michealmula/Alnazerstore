@@ -1124,3 +1124,35 @@ input { font-family: inherit; outline: none; border: none; }
 
   .admin-main { padding: 18px; }
 }
+
+/* Overlay وراء الفلتر على الموبايل */
+.filter-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .filter-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 399;
+  }
+
+  .filter-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    color: var(--white-muted);
+    transition: var(--tf);
+  }
+
+  .filter-close-btn:hover {
+    background: rgba(233,72,72,.15);
+    color: #e94848;
+  }
+}

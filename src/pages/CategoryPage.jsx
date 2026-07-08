@@ -129,12 +129,23 @@ const products      = useMemo(() => allProducts.filter(p => p.category === key),
 
       <div className="cat-layout">
         {/* Filters sidebar */}
-        {filterOpen && (
-          <aside className="filters-sidebar">
-            <div className="filter-header">
-              <h3>الفلاتر</h3>
-              <button onClick={clearFilters} className="filter-clear">مسح الكل</button>
-            </div>
+{filterOpen && (
+  <>
+    {/* Overlay — الضغط عليه يقفل الفلتر */}
+    <div
+      className="filter-overlay"
+      onClick={() => setFilterOpen(false)}
+    />
+    <aside className="filters-sidebar">
+      <div className="filter-header">
+        <h3>الفلاتر</h3>
+        <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
+          <button onClick={clearFilters} className="filter-clear">مسح الكل</button>
+          <button onClick={() => setFilterOpen(false)} className="filter-close-btn">
+            <X size={16} />
+          </button>
+        </div>
+      </div>
 
             {/* Price range */}
             <div className="filter-group">
@@ -182,6 +193,7 @@ const products      = useMemo(() => allProducts.filter(p => p.category === key),
               )}
             </div>
           </aside>
+          </>
         )}
 
         {/* Products grid */}
