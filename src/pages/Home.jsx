@@ -186,7 +186,7 @@ function CategoriesSection() {
 /* ── Featured Tabs ── */
 function FeaturedSection() {
   const [tab, setTab] = useState('bestseller');
-  const allFlat = useProducts();
+  const { products: allFlat } = useProducts();
 
   const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
 
@@ -223,7 +223,7 @@ function FeaturedSection() {
 
 /* ── Deals Banner ── */
 function DealsBanner() {
-  const allProducts = useProducts();
+  const { products: allProducts } = useProducts();
   return (
     <section className="deals-banner">
       <div className="deals-banner-inner">
@@ -287,10 +287,22 @@ function PromoBanner() {
 
 /* ── Main Home ── */
 export default function Home() {
-  const allProducts = useProducts();
+  const { products: allProducts, loading } = useProducts();
 
   const newArrivals = allProducts.filter(p => p.isNew).slice(0, 8);
   const bestsellers = allProducts.filter(p => p.isBestseller).slice(0, 8);
+
+  if (loading) return (
+    <>
+      <HeroSlider />
+      <PromoBanner />
+      <CategoriesSection />
+      <div className="loading-state">
+        <div className="loading-spinner" />
+        <p>جار التحميل...</p>
+      </div>
+    </>
+  );
 
   return (
     <>

@@ -17,8 +17,8 @@ const SORT_OPTIONS = [
 export default function CategoryPage() {
   const { key } = useParams();
 const cat          = CATALOG.find(c => c.key === key);
-const allProducts  = useProducts();
-const products      = useMemo(() => allProducts.filter(p => p.category === key), [allProducts, key]);
+const { products: allProducts, loading } = useProducts();
+const products = useMemo(() => allProducts.filter(p => p.category === key), [allProducts, key]);
 
   const [page,         setPage]         = useState(1);
   const [sort,         setSort]         = useState('default');
@@ -69,6 +69,15 @@ const products      = useMemo(() => allProducts.filter(p => p.category === key),
     badgeFilter.length > 0,
     ratingFilter > 0,
   ].filter(Boolean).length;
+
+if (loading) return (
+  <div className="loading-state">
+    <div className="loading-spinner" />
+    <p>جار التحميل...</p>
+  </div>
+);
+
+
 
   if (!cat) return (
     <div className="not-found">
