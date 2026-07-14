@@ -31,10 +31,15 @@ const handleDelete = async (id) => {
   }
 };
 
-  const handleSave = async (product) => {
+ const handleSave = async (product) => {
+  try {
     await saveProduct(product);
-    setEditing(null);
-  };
+    setEditing(null); // ← المفروض يقفل
+  } catch (err) {
+    alert('فشل الحفظ: ' + err.message);
+    console.error(err);
+  }
+};
 
   return (
     <div>
@@ -122,20 +127,28 @@ const [form, setForm] = useState({
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const cat = CATALOG.find(c => c.key === form.category);
-    onSave({
-      ...form,
-      price: Number(form.price),
-      rating: Number(form.rating),
-      categoryLabel: cat.label,
-      group: cat.group,
-      gender: cat.gender,
-isNew: form.isNew,
-isBestseller: form.isBestseller,
-    });
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const cat = CATALOG.find(c => c.key === form.category);
+
+  const productData = {
+    ...form,
+    price: Number(form.price),
+    rating: Number(form.rating),
+    categoryLabel: cat.label,
+    group: cat.group,
+    gender: cat.gender,
+    isNew: form.isNew,
+    isBestseller: form.isBestseller,
   };
+
+  // لو منتج جديد — شيل الـ id الفاضي عشان addDoc يشتغل
+  if (!productData.id) {
+    delete productData.id;
+  }
+
+  onSave(productData);
+};
 
   return (
     <div style={{
