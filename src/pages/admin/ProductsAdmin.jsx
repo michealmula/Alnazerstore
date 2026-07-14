@@ -20,9 +20,16 @@ export default function ProductsAdmin() {
   );
 
 const handleDelete = async (id) => {
-    if (!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
+   console.log('ID:', id);
+  if (!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
+  try {
     await deleteProduct(id);
-  };
+    alert('تم الحذف بنجاح ✅');
+  } catch (err) {
+    alert('فشل الحذف ❌: ' + err.message);
+    console.error(err);
+  }
+};
 
   const handleSave = async (product) => {
     await saveProduct(product);

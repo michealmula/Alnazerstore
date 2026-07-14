@@ -14,7 +14,10 @@ const ordersCol   = collection(db, 'orders');
 // اشتراك لحظي — أي تغيير في Firestore هيوصل لكل الأجهزة فوراً
 export function subscribeProducts(callback) {
   return onSnapshot(productsCol, (snapshot) => {
-    const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    const list = snapshot.docs.map(d => ({
+      ...d.data(),
+      id: d.id,        // ← Firestore document ID دايماً يغلب أي field تاني
+    }));
     callback(list);
   });
 }
