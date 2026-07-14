@@ -1271,3 +1271,86 @@ input { font-family: inherit; outline: none; border: none; }
   .col-stats { flex-wrap: wrap; gap: 12px; }
   .col-stat-divider { display: none; }
 }
+
+
+/* ─────────────────────────────────────────────
+   PRODUCTS ADMIN — Responsive
+───────────────────────────────────────────── */
+
+/* Desktop: table ظاهر، cards مخفية */
+.products-admin-table { display: block; }
+.products-admin-cards { display: none; }
+
+/* Mobile: table مخفي، cards ظاهرة */
+@media (max-width: 640px) {
+  .products-admin-table { display: none; }
+  .products-admin-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .product-admin-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .pac-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .pac-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pac-name {
+    font-family: var(--font-arabic);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pac-code { font-size: .7rem; color: var(--white-dim); }
+  .pac-cat  { font-size: .74rem; color: var(--white-muted); font-family: var(--font-arabic); }
+  .pac-price { font-size: .82rem; color: var(--gold); font-family: var(--font-display); }
+
+  .pac-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .pac-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--dark-border);
+    transition: var(--tf);
+  }
+
+  .pac-edit { color: var(--white-muted); }
+  .pac-edit:hover { color: var(--gold); border-color: var(--gold); }
+  .pac-del  { color: #e94848; }
+  .pac-del:hover { background: rgba(233,72,72,.12); border-color: #e94848; }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
 import { CATALOG } from '../../data/catalog';
 import { saveProduct, deleteProduct } from '../../data/store';
@@ -10,86 +10,112 @@ const inputStyle = {
 };
 
 export default function ProductsAdmin() {
-  const {products  } = useProducts();
-  const [search, setSearch] = useState('');
-  const [editing, setEditing] = useState(null); // null | {} (new) | product object
+  const { products } = useProducts();
+  const [search, setSearch]   = useState('');
+  const [editing, setEditing] = useState(null);
 
   const filtered = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.code.toLowerCase().includes(search.toLowerCase())
   );
 
-const handleDelete = async (id) => {
-   console.log('ID:', id);
-  if (!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
-  try {
-    await deleteProduct(id);
-    alert('تم الحذف بنجاح ✅');
-  } catch (err) {
-    alert('فشل الحذف ❌: ' + err.message);
-    console.error(err);
-  }
-};
+  const handleDelete = async (id) => {
+    if (!confirm('متأكد إنك عايز تحذف المنتج ده؟')) return;
+    try {
+      await deleteProduct(id);
+    } catch (err) {
+      alert('فشل الحذف ❌: ' + err.message);
+    }
+  };
 
- const handleSave = async (product) => {
-  try {
-    await saveProduct(product);
-    setEditing(null); // ← المفروض يقفل
-  } catch (err) {
-    alert('فشل الحفظ: ' + err.message);
-    console.error(err);
-  }
-};
+  const handleSave = async (product) => {
+    try {
+      await saveProduct(product);
+      setEditing(null);
+    } catch (err) {
+      alert('فشل الحفظ: ' + err.message);
+    }
+  };
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)' }}>المنتجات ({products.length})</h1>
+      {/* Header */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24, flexWrap:'wrap', gap:12 }}>
+        <h1 style={{ fontFamily:'var(--font-display)', color:'var(--white)', fontSize:'clamp(1.3rem,3vw,1.8rem)' }}>
+          المنتجات ({products.length})
+        </h1>
         <button className="btn-primary" onClick={() => setEditing({})}>
           <Plus size={16} /> إضافة منتج
         </button>
       </div>
 
-      <div style={{ position: 'relative', marginBottom: 20, maxWidth: 320 }}>
-        <Search size={16} style={{ position: 'absolute', top: 12, right: 12, color: 'var(--white-dim)' }} />
+      {/* Search */}
+      <div style={{ position:'relative', marginBottom:20 }}>
+        <Search size={16} style={{ position:'absolute', top:12, right:12, color:'var(--white-dim)' }} />
         <input
-          style={{ ...inputStyle, paddingRight: 36 }}
+          style={{ ...inputStyle, paddingRight:36 }}
           placeholder="بحث بالاسم أو الكود..."
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
       </div>
 
-<div style={{ background: 'var(--dark-card)', border: '1px solid var(--dark-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }} className="admin-table-wrap">
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      {/* ── Desktop: Table ── */}
+      <div className="products-admin-table admin-table-wrap"
+        style={{ background:'var(--dark-card)', border:'1px solid var(--dark-border)', borderRadius:'var(--radius-lg)', overflow:'hidden' }}>
+        <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--dark-border)' }}>
+            <tr style={{ borderBottom:'1px solid var(--dark-border)' }}>
               {['', 'الاسم', 'الكود', 'القسم', 'السعر', ''].map((h, i) => (
-                <th key={i} style={{ padding: 12, textAlign: 'right', color: 'var(--white-muted)', fontSize: '.78rem', fontFamily: 'var(--font-arabic)' }}>{h}</th>
+                <th key={i} style={{ padding:12, textAlign:'right', color:'var(--white-muted)', fontSize:'.78rem', fontFamily:'var(--font-arabic)' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {filtered.map(p => (
-              <tr key={p.id} style={{ borderBottom: '1px solid var(--dark-border)' }}>
-                <td style={{ padding: 10 }}>
-                  <img src={p.image} alt={p.name} style={{ width: 38, height: 38, borderRadius: 8, objectFit: 'cover' }} />
+              <tr key={p.id} style={{ borderBottom:'1px solid var(--dark-border)' }}>
+                <td style={{ padding:10 }}>
+                  <img src={p.image} alt={p.name} style={{ width:38, height:38, borderRadius:8, objectFit:'cover' }} />
                 </td>
-                <td style={{ padding: 10, color: 'var(--white)', fontSize: '.84rem', fontFamily: 'var(--font-arabic)' }}>{p.name}</td>
-                <td style={{ padding: 10, color: 'var(--white-dim)', fontSize: '.78rem' }}>{p.code}</td>
-                <td style={{ padding: 10, color: 'var(--white-muted)', fontSize: '.82rem', fontFamily: 'var(--font-arabic)' }}>{p.categoryLabel}</td>
-                <td style={{ padding: 10, color: 'var(--gold)', fontSize: '.84rem' }}>{p.price} EGP</td>
-                <td style={{ padding: 10, display: 'flex', gap: 6 }}>
-                  <button onClick={() => setEditing(p)} style={{ color: 'var(--white-muted)' }}><Edit2 size={15} /></button>
-                  <button onClick={() => handleDelete(p.id)} style={{ color: '#e94848' }}><Trash2 size={15} /></button>
+                <td style={{ padding:10, color:'var(--white)', fontSize:'.84rem', fontFamily:'var(--font-arabic)' }}>{p.name}</td>
+                <td style={{ padding:10, color:'var(--white-dim)', fontSize:'.78rem' }}>{p.code}</td>
+                <td style={{ padding:10, color:'var(--white-muted)', fontSize:'.82rem', fontFamily:'var(--font-arabic)' }}>{p.categoryLabel}</td>
+                <td style={{ padding:10, color:'var(--gold)', fontSize:'.84rem' }}>{p.price} EGP</td>
+                <td style={{ padding:10 }}>
+                  <div style={{ display:'flex', gap:6 }}>
+                    <button onClick={() => setEditing(p)} style={{ color:'var(--white-muted)', padding:6 }}><Edit2 size={15} /></button>
+                    <button onClick={() => handleDelete(p.id)} style={{ color:'#e94848', padding:6 }}><Trash2 size={15} /></button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         {filtered.length === 0 && (
-          <p style={{ padding: 30, textAlign: 'center', color: 'var(--white-dim)', fontFamily: 'var(--font-arabic)' }}>مفيش منتجات مطابقة</p>
+          <p style={{ padding:30, textAlign:'center', color:'var(--white-dim)', fontFamily:'var(--font-arabic)' }}>مفيش منتجات مطابقة</p>
         )}
+      </div>
+
+      {/* ── Mobile: Cards ── */}
+      <div className="products-admin-cards">
+        {filtered.length === 0 && (
+          <p style={{ padding:30, textAlign:'center', color:'var(--white-dim)', fontFamily:'var(--font-arabic)' }}>مفيش منتجات مطابقة</p>
+        )}
+        {filtered.map(p => (
+          <div key={p.id} className="product-admin-card">
+            <img src={p.image} alt={p.name} className="pac-img" />
+            <div className="pac-info">
+              <p className="pac-name">{p.name}</p>
+              <p className="pac-code">{p.code}</p>
+              <p className="pac-cat">{p.categoryLabel}</p>
+              <p className="pac-price">{p.price} EGP</p>
+            </div>
+            <div className="pac-actions">
+              <button onClick={() => setEditing(p)} className="pac-btn pac-edit"><Edit2 size={15} /></button>
+              <button onClick={() => handleDelete(p.id)} className="pac-btn pac-del"><Trash2 size={15} /></button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {editing !== null && (
@@ -105,17 +131,17 @@ const handleDelete = async (id) => {
 
 function ProductFormModal({ product, onClose, onSave }) {
   const isNew = !product.id;
-const [form, setForm] = useState({
-    id: product.id || '',
-    name: product.name || '',
-    code: product.code || '',
-    price: product.price || '',
-    category: product.category || CATALOG[0].key,
-    description: product.description || '',
-    image: product.image || '',
-    badge: product.badge || '',
-    rating: product.rating || 4.5,
-    isNew: product.isNew || false,
+  const [form, setForm] = useState({
+    id:           product.id           || '',
+    name:         product.name         || '',
+    code:         product.code         || '',
+    price:        product.price        || '',
+    category:     product.category     || CATALOG[0].key,
+    description:  product.description  || '',
+    image:        product.image        || '',
+    badge:        product.badge        || '',
+    rating:       product.rating       || 4.5,
+    isNew:        product.isNew        || false,
     isBestseller: product.isBestseller || false,
   });
 
@@ -127,54 +153,55 @@ const [form, setForm] = useState({
     reader.readAsDataURL(file);
   };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  const cat = CATALOG.find(c => c.key === form.category);
-
-  const productData = {
-    ...form,
-    price: Number(form.price),
-    rating: Number(form.rating),
-    categoryLabel: cat.label,
-    group: cat.group,
-    gender: cat.gender,
-    isNew: form.isNew,
-    isBestseller: form.isBestseller,
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const cat = CATALOG.find(c => c.key === form.category);
+    const productData = {
+      ...form,
+      price:         Number(form.price),
+      rating:        Number(form.rating),
+      categoryLabel: cat.label,
+      group:         cat.group,
+      gender:        cat.gender,
+      isNew:         form.isNew,
+      isBestseller:  form.isBestseller,
+    };
+    if (!productData.id) delete productData.id;
+    onSave(productData);
   };
-
-  // لو منتج جديد — شيل الـ id الفاضي عشان addDoc يشتغل
-  if (!productData.id) {
-    delete productData.id;
-  }
-
-  onSave(productData);
-};
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,.8)', zIndex: 2000,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+      position:'fixed', inset:0, background:'rgba(0,0,0,.85)', zIndex:2000,
+      display:'flex', alignItems:'center', justifyContent:'center', padding:16,
+      overflowY:'auto',
     }} onClick={onClose}>
       <form
         onSubmit={handleSubmit}
         onClick={e => e.stopPropagation()}
         style={{
-          background: 'var(--dark-card)', border: '1px solid var(--dark-border)',
-          borderRadius: 'var(--radius-lg)', padding: 28, width: '100%', maxWidth: 480,
-          maxHeight: '88vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 14,
+          background:'var(--dark-card)', border:'1px solid var(--dark-border)',
+          borderRadius:'var(--radius-lg)', padding:24, width:'100%', maxWidth:480,
+          maxHeight:'92vh', overflowY:'auto',
+          display:'flex', flexDirection:'column', gap:14,
+          margin:'auto',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--white)' }}>
+        {/* Title */}
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <h2 style={{ fontFamily:'var(--font-display)', color:'var(--white)', fontSize:'1.3rem' }}>
             {isNew ? 'إضافة منتج جديد' : 'تعديل المنتج'}
           </h2>
-          <button type="button" onClick={onClose} style={{ color: 'var(--white-muted)' }}><X size={20} /></button>
+          <button type="button" onClick={onClose} style={{ color:'var(--white-muted)', padding:4 }}><X size={20} /></button>
         </div>
 
+        {/* Image preview */}
         {form.image && (
-          <img src={form.image} alt="preview" style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
+          <img src={form.image} alt="preview"
+            style={{ width:'100%', height:140, objectFit:'cover', borderRadius:'var(--radius-md)' }} />
         )}
-        <input type="file" accept="image/*" onChange={handleImageUpload} style={{ color: 'var(--white-muted)', fontSize: '.8rem' }} />
+        <input type="file" accept="image/*" onChange={handleImageUpload}
+          style={{ color:'var(--white-muted)', fontSize:'.8rem' }} />
 
         <input style={inputStyle} placeholder="اسم المنتج" required
           value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
@@ -185,45 +212,41 @@ const handleSubmit = (e) => {
         <input style={inputStyle} type="number" placeholder="السعر" required
           value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
 
-        <select style={inputStyle} value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+        <select style={inputStyle} value={form.category}
+          onChange={e => setForm({ ...form, category: e.target.value })}>
           {CATALOG.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
         </select>
 
-<select style={inputStyle} value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}>
-  <option value="">بدون شارة</option>
-  <option value="new">جديد</option>
-  <option value="hot">الأكثر مبيعاً</option>
-</select>
+        <select style={inputStyle} value={form.badge}
+          onChange={e => setForm({ ...form, badge: e.target.value })}>
+          <option value="">بدون شارة</option>
+          <option value="new">جديد</option>
+          <option value="hot">الأكثر مبيعاً</option>
+        </select>
 
-{/* ← ضيف الجزء ده بعده مباشرة */}
-<div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '10px 0', borderTop: '1px solid var(--dark-border)' }}>
-  <p style={{ color: 'var(--white-muted)', fontSize: '.8rem', fontFamily: 'var(--font-arabic)' }}>
-    ظهور في الصفحة الرئيسية
-  </p>
-  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontFamily: 'var(--font-arabic)', color: 'var(--white-muted)', fontSize: '.84rem' }}>
-    <input
-      type="checkbox"
-      checked={form.isBestseller}
-      onChange={e => setForm({ ...form, isBestseller: e.target.checked })}
-      style={{ accentColor: 'var(--gold)', width: 16, height: 16 }}
-    />
-    يظهر في Best Sellers
-  </label>
-  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontFamily: 'var(--font-arabic)', color: 'var(--white-muted)', fontSize: '.84rem' }}>
-    <input
-      type="checkbox"
-      checked={form.isNew}
-      onChange={e => setForm({ ...form, isNew: e.target.checked })}
-      style={{ accentColor: 'var(--gold)', width: 16, height: 16 }}
-    />
-    يظهر في New Arrivals
-  </label>
-</div>
+        {/* Home visibility */}
+        <div style={{ display:'flex', flexDirection:'column', gap:10, padding:'10px 0', borderTop:'1px solid var(--dark-border)' }}>
+          <p style={{ color:'var(--white-muted)', fontSize:'.8rem', fontFamily:'var(--font-arabic)' }}>
+            ظهور في الصفحة الرئيسية
+          </p>
+          <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', fontFamily:'var(--font-arabic)', color:'var(--white-muted)', fontSize:'.84rem' }}>
+            <input type="checkbox" checked={form.isBestseller}
+              onChange={e => setForm({ ...form, isBestseller: e.target.checked })}
+              style={{ accentColor:'var(--gold)', width:16, height:16 }} />
+            يظهر في Best Sellers
+          </label>
+          <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', fontFamily:'var(--font-arabic)', color:'var(--white-muted)', fontSize:'.84rem' }}>
+            <input type="checkbox" checked={form.isNew}
+              onChange={e => setForm({ ...form, isNew: e.target.checked })}
+              style={{ accentColor:'var(--gold)', width:16, height:16 }} />
+            يظهر في New Arrivals
+          </label>
+        </div>
 
-        <textarea style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }} placeholder="الوصف"
+        <textarea style={{ ...inputStyle, minHeight:70, resize:'vertical' }} placeholder="الوصف"
           value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
 
-        <button type="submit" className="btn-primary" style={{ justifyContent: 'center', marginTop: 8 }}>
+        <button type="submit" className="btn-primary" style={{ justifyContent:'center', marginTop:4 }}>
           {isNew ? 'إضافة' : 'حفظ التعديلات'}
         </button>
       </form>
