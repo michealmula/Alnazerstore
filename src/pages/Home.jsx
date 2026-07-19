@@ -4,6 +4,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react
 import ProductCard from '../components/ProductCard';
 import { CATALOG } from '../data/catalog';
 import { useProducts } from '../data/useProducts';
+import tqbg from '../photos/tqbg.png';
 
 /* ── Hero Slides ── */
 const HERO_SLIDES = [
@@ -13,7 +14,7 @@ const HERO_SLIDES = [
     title: 'Luxury',
     titleGold: 'Accessories',
     desc: 'اكتشف أرقى مجموعات الإكسسوارات المختارة بعناية لذوق راقي مميز',
-    cta: { label: 'تسوق الآن', to: '/category/halaqan' },
+    cta: { label: 'الاكثر مبيعا', to: '/best-sellers' },
     cta2: { label: 'حلقان', to: '/category/halaqan' },
   },
   {
@@ -22,8 +23,8 @@ const HERO_SLIDES = [
     title: 'Premium',
     titleGold: 'Beauty',
     desc: 'أجود منتجات العناية والجمال — بادي سبلاش، رول اون، سكين كير',
-    cta: { label: 'اكتشفي الآن', to: '/category/bodysplash' },
-    cta2: { label: 'Skin Care', to: '/category/skincare' },
+    cta: { label: 'اكتشفي الآن', to: '/category/kosmatics' },
+    cta2: { label: 'Skin Care', to: '/category/kosmatics' },
   },
   {
     bg: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1600&q=85',
@@ -31,18 +32,18 @@ const HERO_SLIDES = [
     title: 'Elegant',
     titleGold: 'Chains',
     desc: 'سلاسل وخواتم ذهبية وفضية بتصاميم عريقة وأنيقة',
-    cta: { label: 'سلاسل', to: '/category/salasil' },
+    cta: { label: 'وصل حديثا', to: '/new-arrivals' },
     cta2: { label: 'خواتم', to: '/category/khawatim' },
   },
-  {
-    bg: 'https://images.unsplash.com/photo-1573408301185-9519f94816b5?w=1600&q=85',
-    eyebrow: '✦ Special Deals',
-    title: 'Special',
-    titleGold: 'Offers',
-    desc: 'عروض حصرية على أسورة وانسيالات بأجمل التصاميم',
-    cta: { label: 'عروض', to: '/category/aswera' },
-    cta2: { label: 'انسيال', to: '/category/ansyal' },
-  },
+{
+  bg: tqbg,
+  eyebrow: '✦ Premium Watches',
+  title: 'Luxury',
+  titleGold: 'Watches',
+  desc: 'اكتشف مجموعة مختارة من الساعات الفاخرة التي تجمع بين الأناقة والدقة.',
+  cta: { label: 'تسوق الآن', to: 'https://michealmula.github.io/tqstore/' },
+  cta2: { label: 'انسيال', to: '/category/ansyal' },
+},
 ];
 
 /* ── Hero Slider ── */
