@@ -22,6 +22,8 @@ export default function Header() {
   const navigate                      = useNavigate();
   const location                      = useLocation();
   const { favorites, cart, cartCount, removeFromCart } = useStore();
+const { products, loading } = useProducts();
+
 
 const [headerState, setHeaderState] = useState('top'); // 'top' | 'scrolled'
 
@@ -54,7 +56,7 @@ useEffect(() => {
 
   /* ── search results ── */
 const results = searchQ.trim().length > 0
-    ? allProducts.filter(p =>
+    ? products.filter(p =>
         p.name.toLowerCase().includes(searchQ.toLowerCase()) ||
         p.code.toLowerCase().includes(searchQ.toLowerCase()) ||
         p.categoryLabel.includes(searchQ)
