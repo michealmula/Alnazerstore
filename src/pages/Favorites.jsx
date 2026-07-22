@@ -5,9 +5,17 @@ import { useStore } from '../context/StoreContext';
 import { useProducts } from '../data/useProducts';
 
 export default function Favorites() {
+  // 1. استدعاء الـ Context الخاص بالمفضلات
   const { favorites } = useStore();
-  const { products } = useProducts(); // ← خد products من الـ object
-  const favProducts = products.filter(p => favorites.includes(p.id));
+  
+  // 2. استدعاء الـ Hook الخاص بالمنتجات واستخراج المصفوفة من الكائن المُعاد
+  const { products } = useProducts(); 
+
+  // 3. التأكد من أن `products` هي مصفوفة قبل استخدام `.filter()`
+  const productsArray = Array.isArray(products) ? products : [];
+  
+  // 4. تصفية المنتجات المفضلة
+  const favProducts = productsArray.filter(p => favorites.includes(p.id));
 
   return (
     <div className="page-wrapper">
