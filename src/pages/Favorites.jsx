@@ -6,9 +6,8 @@ import { useProducts } from '../data/useProducts';
 
 export default function Favorites() {
   const { favorites } = useStore();
-  const allProducts = useProducts();
-  const favProducts = allProducts.filter(p => favorites.includes(p.id));
-  
+  const { products } = useProducts(); // ← خد products من الـ object
+  const favProducts = products.filter(p => favorites.includes(p.id));
 
   return (
     <div className="page-wrapper">
